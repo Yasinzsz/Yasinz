@@ -1,7 +1,6 @@
 local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
 
 local Players = game:GetService("Players")
-local LocalPlayer = Players.LocalPlayer
 local IgnorePlayers = {
     ["KANEKIMNS15"] = true,
     ["SINASAMAR2"] = true,
@@ -9,7 +8,7 @@ local IgnorePlayers = {
 local UserInputService = game:GetService("UserInputService")
 
 local RunService = game:GetService("RunService")
-
+local LocalPlayer = Players.LocalPlayer
 local HighlightParts = {
     Head = true,
     HumanoidRootPart = false,
@@ -136,7 +135,7 @@ local Button = TabPlayer:CreateButton({
 })
 local Slider = TabPlayer:CreateSlider({
    Name = "HitBox Size",
-   Range = {0, 35},
+   Range = {0, 50},
    Increment = 1,
    Suffix = "",
    CurrentValue = 5, -- A flag is the identifier for the configuration file; make sure every element has a different flag if you're using configuration saving to ensure no overlaps
@@ -171,26 +170,46 @@ local Toggle = TabMove:CreateToggle({
    end,
 })
 
-local WalkSpeed = 16
 local SectionSpeed = TabMove:CreateSection("Speed")
-local Slider = TabMove:CreateSlider({
-   Name = "Speed(Sonic Ali)⚡",
-   Range = {16, 100},
-   Increment = 1,
-   Suffix = "⚡",
-   CurrentValue = 16,
-   Callback = function(Value)
-      WalkSpeed = Value
 
-      local Character = game.Players.LocalPlayer.Character
-      local Humanoid = Character and Character:FindFirstChildOfClass("Humanoid")
+local Speed = 16
 
-      if Humanoid then
-         Humanoid.WalkSpeed = Value
-      end
-   end,
+local function ApplySpeed()
+    local Character = LocalPlayer.Character
+    if not Character then return end
+
+    local Humanoid = Character:FindFirstChild("Humanoid")
+    if Humanoid then
+        Humanoid.WalkSpeed = Speed
+    end
+end
+
+local SliderSpeed = TabMove:CreateSlider({
+    Name = "Speed (Sonic Ali)⚡",
+    Range = {16, 100},
+    Increment = 1,
+    Suffix = "⚡",
+    CurrentValue = 16,
+    Callback = function(Value)
+        Speed = Value
+        ApplySpeed()
+    end,
 })
+--speed
+RunService.RenderStepped:Connect(function()
+    ApplySpeed()
+end)
+
+LocalPlayer.CharacterAdded:Connect(function(Character)
+    Character:WaitForChild("Humanoid")
+    task.wait(1)
+    ApplySpeed()
+end)
+--endspeed
+
 local Noclip = false
+local GoingDown = false
+
 local SectionNoClip = TabMove:CreateSection("NoClip")
 local ToggleNoclip = TabMove:CreateToggle({
    Name = "Noclip (X-MEN 🙏😭)",
@@ -212,34 +231,41 @@ end,
 })
 
 --noclip
-RunService.Stepped:Connect(function()
-   if not Noclip then
-      return
-   end
+UserInputService.InputBegan:Connect(function(Input, GP)
+    if GP then return end
 
-   local Character = LocalPlayer.Character
-   if not Character then
-      return
-   end
-
-   for _, Part in ipairs(Character:GetDescendants()) do
-      if Part:IsA("BasePart") then
-         Part.CanCollide = false
-      end
-   end
+    if Input.KeyCode == Enum.KeyCode.LeftControl then
+        GoingDown = true
+    end
 end)
 
-LocalPlayer.CharacterAdded:Connect(function(Character)
-   Character:WaitForChild("Humanoid")
+UserInputService.InputEnded:Connect(function(Input)
+    if Input.KeyCode == Enum.KeyCode.LeftControl then
+        GoingDown = false
+    end
+end)
 
-   if Noclip then
-      for _, Part in ipairs(Character:GetDescendants()) do
-         if Part:IsA("BasePart") then
+RunService.RenderStepped:Connect(function(dt)
+    if not Noclip then return end
+
+    local Character = LocalPlayer.Character
+    if not Character then return end
+
+    local Root = Character:FindFirstChild("HumanoidRootPart")
+    if not Root then return end
+
+    for _, Part in ipairs(Character:GetDescendants()) do
+        if Part:IsA("BasePart") then
             Part.CanCollide = false
-         end
-      end
-   end
+        end
+    end
+
+    if GoingDown then
+        Root.CFrame = Root.CFrame * CFrame.new(0, -100 * dt, 0)
+    end
 end)
+
+--inf jump
 
 UserInputService.JumpRequest:Connect(function()
    if InfiniteJump then
