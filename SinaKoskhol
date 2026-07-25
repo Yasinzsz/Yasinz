@@ -127,6 +127,29 @@ local TraceToggle = TabPlayer:CreateToggle({
    end,
 })
 
+local HighlightParts = {
+    Head = true,
+    HumanoidRootPart = false,
+    UpperTorso = true,
+    LowerTorso = true,
+
+    LeftUpperArm = true,
+    LeftLowerArm = true,
+    LeftHand = true,
+
+    RightUpperArm = true,
+    RightLowerArm = true,
+    RightHand = true,
+
+    LeftUpperLeg = true,
+    LeftLowerLeg = true,
+    LeftFoot = true,
+
+    RightUpperLeg = true,
+    RightLowerLeg = true,
+    RightFoot = true,
+}
+
 
 local tracers = {}
 game:GetService('RunService').RenderStepped:Connect(function()
@@ -155,15 +178,32 @@ game:GetService('RunService').RenderStepped:Connect(function()
     end
     
 
-    for _, v in next, Players:GetPlayers() do
-        if v ~= LocalPlayer and v.Character then
-            local humanoid = v.Character:FindFirstChild("Humanoid")
-            local hl = v.Character:FindFirstChild("EspHighlight") or Instance.new("Highlight", v.Character)
-            hl.Name = "EspHighlight"
-            hl.FillColor = Color3.fromRGB(0, 0, 0)
-            hl.Enabled = _G.ESPEnabled and humanoid and humanoid.Health > 0
+        for _, Player in ipairs(Players:GetPlayers()) do
+            if Player ~= LocalPlayer and Player.Character then
+                local Character = Player.Character
+                local Humanoid = Character:FindFirstChild("Humanoid")
+
+                for PartName, Enabled in pairs(HighlightParts) do
+                    local Part = Character:FindFirstChild(PartName)
+
+                    if Part and Enabled then
+                        local HL = Part:FindFirstChild("ESPHighlight")
+
+                        if not HL then
+                            HL = Instance.new("Highlight")
+                            HL.Name = "ESPHighlight"
+                            HL.Adornee = Part
+                            HL.FillColor = Color3.fromRGB(0, 0, 0)
+                            HL.OutlineColor = Color3.fromRGB(255, 255, 255)
+                            HL.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop
+                            HL.Parent = Part
+                        end
+
+                        HL.Enabled = _G.ESPEnabled and Humanoid and Humanoid.Health > 0
+                    end
+                end
+            end
         end
-    end
     
 
     for _, v in pairs(Players:GetPlayers()) do
