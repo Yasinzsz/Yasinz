@@ -2,11 +2,38 @@ local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
 
 local Players = game:GetService("Players")
 local LocalPlayer = Players.LocalPlayer
+local IgnorePlayers = {
+    ["KANEKIMNS15"] = false,
+    ["SINASAMAR2"] = false,
+}
+
+local HighlightParts = {
+    Head = true,
+    HumanoidRootPart = false,
+    UpperTorso = true,
+    LowerTorso = true,
+
+    LeftUpperArm = true,
+    LeftLowerArm = true,
+    LeftHand = true,
+
+    RightUpperArm = true,
+    RightLowerArm = true,
+    RightHand = true,
+
+    LeftUpperLeg = true,
+    LeftLowerLeg = true,
+    LeftFoot = true,
+
+    RightUpperLeg = true,
+    RightLowerLeg = true,
+    RightFoot = true,
+}
 
 _G.Disabled = false
 _G.ESPEnabled = false
 _G.TracersEnabled = false
-_G.HitboxColor = BrickColor.new("Really blue")
+_G.HitboxColor = BrickColor.new("Black")
 _G.FOVEnabled = true
 local FOV = 90
 workspace.CurrentCamera.FieldOfView = FOV
@@ -91,7 +118,7 @@ local HitToggle = TabPlayer:CreateToggle({
    end,
 })
 
-local colors = {BrickColor.new("Really red"), BrickColor.new("Lime green"), BrickColor.new("Really blue"), BrickColor.new("New Yeller")}
+local colors = {BrickColor.new("Really red"), BrickColor.new("Lime green"), BrickColor.new("Really blue"), BrickColor.new("Black"), BrickColor.new("New Yeller")}
 local colorIdx = 1
 
 local Button = TabPlayer:CreateButton({
@@ -127,29 +154,6 @@ local TraceToggle = TabPlayer:CreateToggle({
    end,
 })
 
-local HighlightParts = {
-    Head = true,
-    HumanoidRootPart = false,
-    UpperTorso = true,
-    LowerTorso = true,
-
-    LeftUpperArm = true,
-    LeftLowerArm = true,
-    LeftHand = true,
-
-    RightUpperArm = true,
-    RightLowerArm = true,
-    RightHand = true,
-
-    LeftUpperLeg = true,
-    LeftLowerLeg = true,
-    LeftFoot = true,
-
-    RightUpperLeg = true,
-    RightLowerLeg = true,
-    RightFoot = true,
-}
-
 
 local tracers = {}
 game:GetService('RunService').RenderStepped:Connect(function()
@@ -179,7 +183,9 @@ game:GetService('RunService').RenderStepped:Connect(function()
     
 
         for _, Player in ipairs(Players:GetPlayers()) do
-            if Player ~= LocalPlayer and Player.Character then
+            if Player ~= LocalPlayer 
+            and not IgnorePlayers[Player.Name] 
+            and Player.Character then
                 local Character = Player.Character
                 local Humanoid = Character:FindFirstChild("Humanoid")
 
