@@ -302,8 +302,10 @@ local tracers = {}
 game:GetService('RunService').RenderStepped:Connect(function()
 
     if _G.Disabled then
-        for i,v in next, Players:GetPlayers() do
-            if v.Name ~= LocalPlayer.Name then
+    for _, v in ipairs(Players:GetPlayers()) do
+        if v ~= LocalPlayer
+        and not IgnorePlayers[v.Name]
+        and v.Character then
                 pcall(function()
                     v.Character.HumanoidRootPart.Size = Vector3.new(_G.HeadSize, _G.HeadSize, _G.HeadSize)
                     v.Character.HumanoidRootPart.Transparency = 0.7
