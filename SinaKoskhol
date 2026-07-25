@@ -29,7 +29,7 @@ local Window = Rayfield:CreateWindow({
    ConfigurationSaving = {
       Enabled = false,
       FolderName = nil, -- Create a custom folder for your hub/game
-      FileName = "YasinZ HuB"
+      FileName = "Yasinz"
    },
 
    Discord = {
@@ -70,8 +70,7 @@ local Slider = TabCam:CreateSlider({
 local ESPSection = TabPlayer:CreateSection("ESP")
 local ESPToggle = TabPlayer:CreateToggle({
    Name = "ESP(Kheyli Polisi)",
-   CurrentValue = false,
-   Flag = "ToggleEsp", -- A flag is the identifier for the configuration file; make sure every element has a different flag if you're using configuration saving to ensure no overlaps
+   CurrentValue = false, -- A flag is the identifier for the configuration file; make sure every element has a different flag if you're using configuration saving to ensure no overlaps
    Callback = function(Value)
    -- The function that takes place when the toggle is pressed
    -- The variable (Value) is a boolean on whether the toggle is true or false
@@ -84,8 +83,7 @@ local Divider = TabPlayer:CreateDivider()
 local HitSection = TabPlayer:CreateSection("HitBox")
 local HitToggle = TabPlayer:CreateToggle({
    Name = "Hitbox(Kheyli Koskeshi)",
-   CurrentValue = false,
-   Flag = "ToggleHit", -- A flag is the identifier for the configuration file; make sure every element has a different flag if you're using configuration saving to ensure no overlaps
+   CurrentValue = false, -- A flag is the identifier for the configuration file; make sure every element has a different flag if you're using configuration saving to ensure no overlaps
    Callback = function(Value)
    -- The function that takes place when the toggle is pressed
    -- The variable (Value) is a boolean on whether the toggle is true or false
@@ -109,8 +107,7 @@ local Slider = TabPlayer:CreateSlider({
    Range = {0, 35},
    Increment = 1,
    Suffix = "",
-   CurrentValue = 5,
-   Flag = "SliderSize", -- A flag is the identifier for the configuration file; make sure every element has a different flag if you're using configuration saving to ensure no overlaps
+   CurrentValue = 5, -- A flag is the identifier for the configuration file; make sure every element has a different flag if you're using configuration saving to ensure no overlaps
    Callback = function(Value)
    -- The function that takes place when the slider changes
    -- The variable (Value) is a number that correlates to the value the slider is currently at
@@ -122,8 +119,7 @@ local Divider = TabPlayer:CreateDivider()
 local TraceSection = TabPlayer:CreateSection("Trace")
 local TraceToggle = TabPlayer:CreateToggle({
    Name = "Trace(Kheyli Adam zerangi Hasti)",
-   CurrentValue = false,
-   Flag = "ToggleTrace", -- A flag is the identifier for the configuration file; make sure every element has a different flag if you're using configuration saving to ensure no overlaps
+   CurrentValue = false, -- A flag is the identifier for the configuration file; make sure every element has a different flag if you're using configuration saving to ensure no overlaps
    Callback = function(Value)
    -- The function that takes place when the toggle is pressed
    -- The variable (Value) is a boolean on whether the toggle is true or false
@@ -141,7 +137,7 @@ game:GetService('RunService').RenderStepped:Connect(function()
                 pcall(function()
                     v.Character.HumanoidRootPart.Size = Vector3.new(_G.HeadSize, _G.HeadSize, _G.HeadSize)
                     v.Character.HumanoidRootPart.Transparency = 0.7
-                    v.Character.HumanoidRootPart.Color3 = _G.SelectedColor
+                    v.Character.HumanoidRootPart.BrickColor = _G.HitboxColor
                     v.Character.HumanoidRootPart.Material = "Neon"
                     v.Character.HumanoidRootPart.CanCollide = false
                 end)
