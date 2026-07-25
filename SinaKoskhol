@@ -135,7 +135,7 @@ local Button = TabPlayer:CreateButton({
 })
 local Slider = TabPlayer:CreateSlider({
    Name = "HitBox Size",
-   Range = {0, 50},
+   Range = {0, 30},
    Increment = 1,
    Suffix = "",
    CurrentValue = 5, -- A flag is the identifier for the configuration file; make sure every element has a different flag if you're using configuration saving to ensure no overlaps
@@ -186,7 +186,7 @@ end
 
 local SliderSpeed = TabMove:CreateSlider({
     Name = "Speed (Sonic Ali)⚡",
-    Range = {16, 100},
+    Range = {16, 300},
     Increment = 1,
     Suffix = "⚡",
     CurrentValue = 16,
@@ -209,6 +209,7 @@ end)
 
 local Noclip = false
 local GoingDown = false
+local GoingUp = false
 
 local SectionNoClip = TabMove:CreateSection("NoClip")
 local ToggleNoclip = TabMove:CreateToggle({
@@ -245,6 +246,20 @@ UserInputService.InputEnded:Connect(function(Input)
     end
 end)
 
+UserInputService.InputBegan:Connect(function(input, gameProcessed)
+    if gameProcessed then return end
+
+    if input.KeyCode == Enum.KeyCode.E then
+        GoingUp = true
+    end
+end)
+
+UserInputService.InputEnded:Connect(function(input)
+    if input.KeyCode == Enum.KeyCode.E then
+        GoingUp = false
+    end
+end)
+
 RunService.RenderStepped:Connect(function(dt)
     if not Noclip then return end
 
@@ -260,8 +275,11 @@ RunService.RenderStepped:Connect(function(dt)
         end
     end
 
-    if GoingDown then
+    if GoingDown and Noclip then
         Root.CFrame = Root.CFrame * CFrame.new(0, -100 * dt, 0)
+    end
+    if GoingUp and Noclip then
+        Root.CFrame = Root.CFrame * CFrame.new(0, 100 * dt, 0)
     end
 end)
 
