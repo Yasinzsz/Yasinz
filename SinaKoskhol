@@ -1,0 +1,200 @@
+local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
+
+local Players = game:GetService("Players")
+local LocalPlayer = Players.LocalPlayer
+
+_G.Disabled = false
+_G.ESPEnabled = false
+_G.TracersEnabled = false
+_G.HitboxColor = BrickColor.new("Really blue")
+_G.FOVEnabled = true
+local FOV = 90
+workspace.CurrentCamera.FieldOfView = FOV
+
+local Window = Rayfield:CreateWindow({
+   Name = "DUELS | Murders vs Sherrifs",
+   Icon = 0, -- Icon in Topbar. Can use Lucide Icons (string) or Roblox Image (number). 0 to use no icon (default).
+   LoadingTitle = "Age Dari Cheat Mizani Lashi Do Alami",
+   LoadingSubtitle = "by YasinZ",
+   ShowText = "MvS", -- for mobile users to unhide Rayfield, change if you'd like
+   Theme = "Default", -- Check https://docs.sirius.menu/rayfield/configuration/themes
+
+   ToggleUIKeybind = "K", -- The keybind to toggle the UI visibility (string like "K" or Enum.KeyCode)
+
+   DisableRayfieldPrompts = false,
+   DisableBuildWarnings = true, -- Prevents Rayfield from emitting warnings when the script has a version mismatch with the interface.
+
+   -- ScriptID = "sid_xxxxxxxxxxxx", -- Your Script ID from developer.sirius.menu — enables analytics, managed keys, and script hosting
+
+   ConfigurationSaving = {
+      Enabled = false,
+      FolderName = nil, -- Create a custom folder for your hub/game
+      FileName = "YasinZ HuB"
+   },
+
+   Discord = {
+      Enabled = false, -- Prompt the user to join your Discord server if their executor supports it
+      Invite = "noinvitelink", -- The Discord invite code, do not include Discord.gg/. E.g. Discord.gg/ABCD would be ABCD
+      RememberJoins = true -- Set this to false to make them join the Discord every time they load it up
+   },
+
+   KeySystem = false, -- Set this to true to use our key system
+   KeySettings = {
+      Title = "Untitled",
+      Subtitle = "Key System",
+      Note = "No method of obtaining the key is provided", -- Use this to tell the user how to get a key
+      FileName = "Key", -- It is recommended to use something unique, as other scripts using Rayfield may overwrite your key file
+      SaveKey = true, -- The user's key will be saved, but if you change the key, they will be unable to use your script
+      GrabKeyFromSite = false, -- If this is true, set Key below to the RAW site you would like Rayfield to get the key from
+      Key = {"Hello"} -- List of keys that the system will accept, can be RAW file links (pastebin, github, etc.) or simple strings ("hello", "key22")
+   }
+})
+local TabPlayer = Window:CreateTab("Player", 4483362458) -- Title, Image
+local TabCam = Window:CreateTab("Camera", 4483362458) -- Title, Image
+local Slider = TabCam:CreateSlider({
+   Name = "FOV",
+   Range = {0, 120},
+   Increment = 5,
+   Suffix = "",
+   CurrentValue = 90,
+   Flag = "SliderFOV", -- A flag is the identifier for the configuration file; make sure every element has a different flag if you're using configuration saving to ensure no overlaps
+   Callback = function(Value)
+   -- The function that takes place when the slider changes
+   -- The variable (Value) is a number that correlates to the value the slider is currently at
+   FOV = Value
+   workspace.CurrentCamera.FieldOfView = FOV
+   end,
+})
+
+
+local ESPSection = TabPlayer:CreateSection("ESP")
+local ESPToggle = TabPlayer:CreateToggle({
+   Name = "ESP(Kheyli Polisi)",
+   CurrentValue = false,
+   Flag = "ToggleEsp", -- A flag is the identifier for the configuration file; make sure every element has a different flag if you're using configuration saving to ensure no overlaps
+   Callback = function(Value)
+   -- The function that takes place when the toggle is pressed
+   -- The variable (Value) is a boolean on whether the toggle is true or false
+   _G.ESPEnabled = not _G.ESPEnabled
+   end,
+})
+
+local Divider = TabPlayer:CreateDivider()
+
+local HitSection = TabPlayer:CreateSection("HitBox")
+local HitToggle = TabPlayer:CreateToggle({
+   Name = "Hitbox(Kheyli Koskeshi)",
+   CurrentValue = false,
+   Flag = "ToggleHit", -- A flag is the identifier for the configuration file; make sure every element has a different flag if you're using configuration saving to ensure no overlaps
+   Callback = function(Value)
+   -- The function that takes place when the toggle is pressed
+   -- The variable (Value) is a boolean on whether the toggle is true or false
+   _G.Disabled = not _G.Disabled
+   end,
+})
+
+local colors = {BrickColor.new("Really red"), BrickColor.new("Lime green"), BrickColor.new("Really blue"), BrickColor.new("New Yeller")}
+local colorIdx = 1
+
+local Button = TabPlayer:CreateButton({
+   Name = "Color HitBox",
+   Callback = function()
+   -- The function that takes place when the button is pressed
+        colorIdx = (colorIdx % #colors) + 1
+        _G.HitboxColor = colors[colorIdx]
+   end,
+})
+local Slider = TabPlayer:CreateSlider({
+   Name = "HitBox Size",
+   Range = {0, 35},
+   Increment = 1,
+   Suffix = "",
+   CurrentValue = 5,
+   Flag = "SliderSize", -- A flag is the identifier for the configuration file; make sure every element has a different flag if you're using configuration saving to ensure no overlaps
+   Callback = function(Value)
+   -- The function that takes place when the slider changes
+   -- The variable (Value) is a number that correlates to the value the slider is currently at
+   _G.HeadSize = Value
+   end,
+})
+
+local Divider = TabPlayer:CreateDivider()
+local TraceSection = TabPlayer:CreateSection("Trace")
+local TraceToggle = TabPlayer:CreateToggle({
+   Name = "Trace(Kheyli Adam zerangi Hasti)",
+   CurrentValue = false,
+   Flag = "ToggleTrace", -- A flag is the identifier for the configuration file; make sure every element has a different flag if you're using configuration saving to ensure no overlaps
+   Callback = function(Value)
+   -- The function that takes place when the toggle is pressed
+   -- The variable (Value) is a boolean on whether the toggle is true or false
+   _G.TracersEnabled = not _G.TracersEnabled
+   end,
+})
+
+
+local tracers = {}
+game:GetService('RunService').RenderStepped:Connect(function()
+
+    if _G.Disabled then
+        for i,v in next, Players:GetPlayers() do
+            if v.Name ~= LocalPlayer.Name then
+                pcall(function()
+                    v.Character.HumanoidRootPart.Size = Vector3.new(_G.HeadSize, _G.HeadSize, _G.HeadSize)
+                    v.Character.HumanoidRootPart.Transparency = 0.7
+                    v.Character.HumanoidRootPart.Color3 = _G.SelectedColor
+                    v.Character.HumanoidRootPart.Material = "Neon"
+                    v.Character.HumanoidRootPart.CanCollide = false
+                end)
+            end
+        end
+    else
+        for i,v in next, Players:GetPlayers() do
+            if v ~= LocalPlayer and v.Character and v.Character:FindFirstChild("HumanoidRootPart") then
+                pcall(function()
+                    v.Character.HumanoidRootPart.Size = Vector3.new(2, 2, 1)
+                    v.Character.HumanoidRootPart.Transparency = 1
+                end)
+            end
+        end
+    end
+    
+
+    for _, v in next, Players:GetPlayers() do
+        if v ~= LocalPlayer and v.Character then
+            local humanoid = v.Character:FindFirstChild("Humanoid")
+            local hl = v.Character:FindFirstChild("EspHighlight") or Instance.new("Highlight", v.Character)
+            hl.Name = "EspHighlight"
+            hl.FillColor = Color3.fromRGB(0, 0, 0)
+            hl.Enabled = _G.ESPEnabled and humanoid and humanoid.Health > 0
+        end
+    end
+    
+
+    for _, v in pairs(Players:GetPlayers()) do
+        if v ~= LocalPlayer and v.Character and v.Character:FindFirstChild("HumanoidRootPart") then
+            local humanoid = v.Character:FindFirstChild("Humanoid")
+            
+            if _G.TracersEnabled and humanoid and humanoid.Health > 0 then
+                if not tracers[v.Name] then
+                    tracers[v.Name] = Drawing.new("Line")
+                    tracers[v.Name].Color = Color3.fromRGB(255, 255, 255)
+                    tracers[v.Name].Thickness = 1
+                end
+                local pos, vis = workspace.CurrentCamera:WorldToViewportPoint(v.Character.HumanoidRootPart.Position)
+                if vis then
+                    tracers[v.Name].Visible = true
+                    tracers[v.Name].From = Vector2.new(workspace.CurrentCamera.ViewportSize.X/2, workspace.CurrentCamera.ViewportSize.Y)
+                    tracers[v.Name].To = Vector2.new(pos.X, pos.Y)
+                else
+                    tracers[v.Name].Visible = false
+                end
+            elseif tracers[v.Name] then
+                tracers[v.Name]:Remove()
+                tracers[v.Name] = nil
+            end
+        elseif tracers[v.Name] then
+            tracers[v.Name]:Remove()
+            tracers[v.Name] = nil
+        end
+    end
+end)
