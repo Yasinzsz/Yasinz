@@ -32,6 +32,7 @@ local HighlightParts = {
     RightFoot = true,
 }
 
+_G.HeadSize = 3
 _G.Disabled = false
 _G.ESPEnabled = false
 _G.TracersEnabled = false
