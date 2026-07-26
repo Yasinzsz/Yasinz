@@ -4,10 +4,12 @@ local Players = game:GetService("Players")
 local UserInputService = game:GetService("UserInputService")
 local RunService = game:GetService("RunService")
 local LocalPlayer = Players.LocalPlayer
+
 local IgnorePlayers = {
     ["KANEKIMNS15"] = true,
     ["SINASAMAR2"] = true,
 }
+
 local HighlightParts = {
     Head = true,
     HumanoidRootPart = false,
@@ -177,7 +179,6 @@ local ToggleInf = TabMove:CreateToggle({
 local SectionSpeed = TabMove:CreateSection("Speed")
 
 local Speed = 16
-
 local function SetSpeed()
     local Character = LocalPlayer.Character
     if not Character then return end
@@ -189,8 +190,7 @@ local function SetSpeed()
         end
     end
 end
-
-local TabMove:CreateSlider({
+local SliderSpeed = TabMove:CreateSlider({
     Name = "Speed (Sonic Ali)⚡",
     Range = {16, 300},
     Increment = 1,
@@ -201,7 +201,6 @@ local TabMove:CreateSlider({
         SetSpeed()
     end,
 })
-
 
 RunService.Heartbeat:Connect(SetSpeed)
 
@@ -242,7 +241,6 @@ local ButtonPanic = TabPreset:CreateButton({
    ESPToggle:Set(false)
    SliderSpeed:Set(16)
    ToggleInf:Set(false)
-   ToggleNoclip:Set(false)
    end,
 })
 local DividerPreset1 = TabPreset:CreateDivider()
