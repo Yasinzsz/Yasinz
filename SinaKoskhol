@@ -1,14 +1,13 @@
 local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
 
 local Players = game:GetService("Players")
+local UserInputService = game:GetService("UserInputService")
+local RunService = game:GetService("RunService")
+local LocalPlayer = Players.LocalPlayer
 local IgnorePlayers = {
     ["KANEKIMNS15"] = true,
     ["SINASAMAR2"] = true,
 }
-local UserInputService = game:GetService("UserInputService")
-
-local RunService = game:GetService("RunService")
-local LocalPlayer = Players.LocalPlayer
 local HighlightParts = {
     Head = true,
     HumanoidRootPart = false,
@@ -51,7 +50,7 @@ local Window = Rayfield:CreateWindow({
 
    ToggleUIKeybind = "K", -- The keybind to toggle the UI visibility (string like "K" or Enum.KeyCode)
 
-   DisableRayfieldPrompts = false,
+   DisableRayfieldPrompts = true,
    DisableBuildWarnings = true, -- Prevents Rayfield from emitting warnings when the script has a version mismatch with the interface.
 
    -- ScriptID = "sid_xxxxxxxxxxxx", -- Your Script ID from developer.sirius.menu — enables analytics, managed keys, and script hosting
@@ -79,9 +78,12 @@ local Window = Rayfield:CreateWindow({
       Key = {"Hello"} -- List of keys that the system will accept, can be RAW file links (pastebin, github, etc.) or simple strings ("hello", "key22")
    }
 })
+local TabPreset = Window:CreateTab("Preset", 4483362458) -- Title, Image
 local TabPlayer = Window:CreateTab("Player", 4483362458) -- Title, Image
 local TabCam = Window:CreateTab("Camera", 4483362458) -- Title, Image
 local TabMove = Window:CreateTab("Movement", 4483362458) -- Title, Image
+local SectionPeresets = TabPreset:CreateSection("Presets")
+
 local SectionFOV = TabCam:CreateSection("FOV")
 local SliderFov = TabCam:CreateSlider({
    Name = "FOV",
@@ -134,7 +136,7 @@ local Button = TabPlayer:CreateButton({
         _G.HitboxColor = colors[colorIdx]
    end,
 })
-local Slider = TabPlayer:CreateSlider({
+local SliderHitBox = TabPlayer:CreateSlider({
    Name = "HitBox Size",
    Range = {0, 30},
    Increment = 1,
@@ -161,7 +163,7 @@ local TraceToggle = TabCam:CreateToggle({
 --movement
 local InfiniteJump = false
 local SectionSpeed = TabMove:CreateSection("InfJump")
-local Toggle = TabMove:CreateToggle({
+local ToggleInf = TabMove:CreateToggle({
    Name = "InfiniteJump(Super An💩🪽)",
    CurrentValue = false, -- A flag is the identifier for the configuration file; make sure every element has a different flag if you're using configuration saving to ensure no overlaps
    Callback = function(Value)
@@ -171,21 +173,24 @@ local Toggle = TabMove:CreateToggle({
    end,
 })
 
+
 local SectionSpeed = TabMove:CreateSection("Speed")
 
 local Speed = 16
 
-local function ApplySpeed()
+local function SetSpeed()
     local Character = LocalPlayer.Character
     if not Character then return end
 
-    local Humanoid = Character:FindFirstChild("Humanoid")
+    local Humanoid = Character:FindFirstChildOfClass("Humanoid")
     if Humanoid then
-        Humanoid.WalkSpeed = Speed
+        if Humanoid.WalkSpeed ~= Speed then
+            Humanoid.WalkSpeed = Speed
+        end
     end
 end
 
-local SliderSpeed = TabMove:CreateSlider({
+local TabMove:CreateSlider({
     Name = "Speed (Sonic Ali)⚡",
     Range = {16, 300},
     Increment = 1,
@@ -193,20 +198,18 @@ local SliderSpeed = TabMove:CreateSlider({
     CurrentValue = 16,
     Callback = function(Value)
         Speed = Value
-        ApplySpeed()
+        SetSpeed()
     end,
 })
---speed
-RunService.RenderStepped:Connect(function()
-    ApplySpeed()
-end)
+
+
+RunService.Heartbeat:Connect(SetSpeed)
 
 LocalPlayer.CharacterAdded:Connect(function(Character)
     Character:WaitForChild("Humanoid")
-    task.wait(1)
-    ApplySpeed()
+    task.wait(0.2)
+    SetSpeed()
 end)
---endspeed
 
 local Noclip = false
 local GoingDown = false
@@ -230,6 +233,55 @@ local ToggleNoclip = TabMove:CreateToggle({
         end
     end
 end,
+})
+local ButtonPanic = TabPreset:CreateButton({
+   Name = "Panic",
+   Callback = function()
+   -- The function that takes place when the button is pressed
+   HitToggle:Set(false)
+   ESPToggle:Set(false)
+   SliderSpeed:Set(16)
+   ToggleInf:Set(false)
+   ToggleNoclip:Set(false)
+   end,
+})
+local DividerPreset1 = TabPreset:CreateDivider()
+
+local ButtonSilent = TabPreset:CreateButton({
+   Name = "Silent",
+   Callback = function()
+   -- The function that takes place when the button is pressed
+   HitToggle:Set(true)
+   SliderHitBox:Set(3)
+   ESPToggle:Set(true)
+   end,
+})
+
+local DividerPreset2 = TabPreset:CreateDivider()
+
+local ButtonFFA = TabPreset:CreateButton({
+   Name = "FFA",
+   Callback = function()
+   -- The function that takes place when the button is pressed
+   HitToggle:Set(true)
+   SliderHitBox:Set(10)
+   ESPToggle:Set(true)
+   end,
+})
+
+local DividerPreset3 = TabPreset:CreateDivider()
+
+local ButtonGOD = TabPreset:CreateButton({
+   Name = "GOD",
+   Callback = function()
+   -- The function that takes place when the button is pressed
+   HitToggle:Set(true)
+   SliderHitBox:Set(25)
+   ESPToggle:Set(true)
+   SliderSpeed:Set(300)
+   ToggleInf:Set(true)
+   ToggleNoclip:Set(true)
+   end,
 })
 
 --noclip
