@@ -234,7 +234,7 @@ local ToggleNoclip = TabMove:CreateToggle({
 end,
 })
 local ButtonPanic = TabPreset:CreateButton({
-   Name = "Panic",
+   Name = "Panic (Khaye Krdan)",
    Callback = function()
    -- The function that takes place when the button is pressed
    HitToggle:Set(false)
@@ -246,7 +246,7 @@ local ButtonPanic = TabPreset:CreateButton({
 local DividerPreset1 = TabPreset:CreateDivider()
 
 local ButtonSilent = TabPreset:CreateButton({
-   Name = "Silent",
+   Name = "Silent (Yavashaki)",
    Callback = function()
    -- The function that takes place when the button is pressed
    HitToggle:Set(true)
@@ -258,7 +258,7 @@ local ButtonSilent = TabPreset:CreateButton({
 local DividerPreset2 = TabPreset:CreateDivider()
 
 local ButtonFFA = TabPreset:CreateButton({
-   Name = "FFA",
+   Name = "FFA (Koskesh Bazi)",
    Callback = function()
    -- The function that takes place when the button is pressed
    HitToggle:Set(true)
@@ -270,7 +270,7 @@ local ButtonFFA = TabPreset:CreateButton({
 local DividerPreset3 = TabPreset:CreateDivider()
 
 local ButtonGOD = TabPreset:CreateButton({
-   Name = "GOD",
+   Name = "GOD (Koskesh ++)",
    Callback = function()
    -- The function that takes place when the button is pressed
    HitToggle:Set(true)
