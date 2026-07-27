@@ -33,6 +33,8 @@ local HighlightParts = {
     RightFoot = true,
 }
 
+
+_G.Transparency = 0.7
 _G.HeadSize = 3
 _G.Disabled = false
 _G.ESPEnabled = false
@@ -105,7 +107,7 @@ local SliderHitBox = leftPlayer:CreateSlider({
     value = 3,
     suffix = "Stud",
     callback = function(value)
-    _G.HeadSize = Value
+    _G.HeadSize = value
     end,
 })
 
@@ -113,13 +115,25 @@ local colors = {BrickColor.new("Really red"), BrickColor.new("Lime green"), Bric
 local colorIdx = 1
 
 local rightPlayer = gridCheat:CreateGroup({ direction = "column" })
-rightPlayer:CreateButton({
+
+local HitColorBtn = rightPlayer:CreateButton({
     name = "Color HitBox",
     callback = function()
         colorIdx = (colorIdx % #colors) + 1
         _G.HitboxColor = colors[colorIdx]
     end,
 })
+local SliderTransparency = rightPlayer:CreateSlider({
+    name = "Transparency",
+    range = { 0, 1 },
+    increment = 0.1,
+    value = 0.7,
+    suffix = ".",
+    callback = function(value)
+    _G.Transparency = value
+    end,
+})
+
 --movement
 local InfiniteJump = false
 local SectionSpeed = TabMove:CreateSection({ name = "InfJump"})
@@ -150,6 +164,9 @@ local function SetSpeed()
             Humanoid.WalkSpeed = Speed
         end
     end
+    if not SpeedValue and Humanoid then
+        Humanoid.WalkSpeed = 16
+    end
 end
 
 local ToggleSpeed = leftspeed:CreateToggle({
@@ -159,6 +176,8 @@ local ToggleSpeed = leftspeed:CreateToggle({
    -- The function that takes place when the toggle is pressed
    -- The variable (Value) is a boolean on whether the toggle is true or false
    SpeedValue = Value
+   task.wait(0.2)
+   SetSpeed()
    end,
 })
 
@@ -328,7 +347,7 @@ game:GetService('RunService').RenderStepped:Connect(function()
         and v.Character then
                 pcall(function()
                     v.Character.HumanoidRootPart.Size = Vector3.new(_G.HeadSize, _G.HeadSize, _G.HeadSize)
-                    v.Character.HumanoidRootPart.Transparency = 0.7
+                    v.Character.HumanoidRootPart.Transparency = _G.Transparency
                     v.Character.HumanoidRootPart.BrickColor = _G.HitboxColor
                     v.Character.HumanoidRootPart.Material = "Neon"
                     v.Character.HumanoidRootPart.CanCollide = false
