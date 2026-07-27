@@ -1,10 +1,9 @@
--- CustomUI Library v2
--- Rayfield style tab system
+-- CustomUI v3
+-- Rayfield Inspired UI Framework
 
 local Library = {}
 
 local TweenService = game:GetService("TweenService")
-local UserInputService = game:GetService("UserInputService")
 local Players = game:GetService("Players")
 
 local Player = Players.LocalPlayer
@@ -12,13 +11,17 @@ local Player = Players.LocalPlayer
 
 Library.Theme = {
 
-    Background = Color3.fromRGB(20,20,25),
-    Secondary = Color3.fromRGB(30,30,38),
+    Background = Color3.fromRGB(18,18,22),
+    Secondary = Color3.fromRGB(25,25,32),
+    Element = Color3.fromRGB(32,32,42),
+
     Accent = Color3.fromRGB(90,120,255),
+
     Text = Color3.fromRGB(240,240,240),
-    Muted = Color3.fromRGB(150,150,150)
+    SubText = Color3.fromRGB(160,160,170)
 
 }
+
 
 
 local function Create(class, props)
@@ -33,13 +36,15 @@ local function Create(class, props)
 end
 
 
-local function Corner(obj,r)
+
+local function Corner(obj, size)
 
     local c = Instance.new("UICorner")
-    c.CornerRadius = UDim.new(0,r or 8)
-    c.Parent = obj
+    c.CornerRadius = UDim.new(0,size or 8)
+    c.Parent=obj
 
 end
+
 
 
 local function Tween(obj,time,props)
@@ -58,23 +63,27 @@ end
 
 
 
+
 function Library:CreateWindow(options)
 
     options = options or {}
 
 
-    local Gui = Create("ScreenGui",{
+    local ScreenGui = Create("ScreenGui",{
+
         Name="CustomUI",
         ResetOnSpawn=false,
         Parent=Player.PlayerGui
+
     })
+
 
 
     local Main = Create("Frame",{
 
         Size=UDim2.fromOffset(
-            options.Width or 650,
-            options.Height or 450
+            options.Size and options.Size.X or 650,
+            options.Size and options.Size.Y or 450
         ),
 
         Position=UDim2.fromScale(.5,.5),
@@ -83,7 +92,7 @@ function Library:CreateWindow(options)
 
         BackgroundColor3=self.Theme.Background,
 
-        Parent=Gui
+        Parent=ScreenGui
 
     })
 
@@ -91,15 +100,29 @@ function Library:CreateWindow(options)
 
 
 
-    -- Title
-
-    local Title = Create("TextLabel",{
+    local Top = Create("Frame",{
 
         Size=UDim2.new(1,0,0,45),
 
         BackgroundColor3=self.Theme.Secondary,
 
-        Text=options.Title or "Custom UI",
+        Parent=Main
+
+    })
+
+    Corner(Top,12)
+
+
+
+    local Title = Create("TextLabel",{
+
+        Size=UDim2.new(1,-20,1,0),
+
+        Position=UDim2.fromOffset(10,0),
+
+        BackgroundTransparency=1,
+
+        Text=options.Name or "Custom UI",
 
         TextColor3=self.Theme.Text,
 
@@ -107,11 +130,11 @@ function Library:CreateWindow(options)
 
         TextSize=18,
 
-        Parent=Main
+        TextXAlignment=Enum.TextXAlignment.Left,
+
+        Parent=Top
 
     })
-
-    Corner(Title,12)
 
 
 
@@ -119,7 +142,7 @@ function Library:CreateWindow(options)
 
     local Sidebar = Create("Frame",{
 
-        Position=UDim2.new(0,10,0,55),
+        Position=UDim2.fromOffset(10,55),
 
         Size=UDim2.new(0,140,1,-65),
 
@@ -129,21 +152,23 @@ function Library:CreateWindow(options)
 
     })
 
+
     Corner(Sidebar,10)
 
 
 
-    local SideLayout = Instance.new("UIListLayout")
-    SideLayout.Padding=UDim.new(0,6)
-    SideLayout.Parent=Sidebar
+    local SideList = Instance.new("UIListLayout")
+    SideList.Padding=UDim.new(0,6)
+    SideList.Parent=Sidebar
 
 
 
-    -- Pages
 
-    local Pages = Create("Frame",{
+    -- Content
 
-        Position=UDim2.new(0,160,0,55),
+    local Content = Create("Frame",{
+
+        Position=UDim2.fromOffset(160,55),
 
         Size=UDim2.new(1,-170,1,-65),
 
@@ -154,52 +179,60 @@ function Library:CreateWindow(options)
     })
 
 
-    local Tabs = {}
-
-    local CurrentTab
-
-
 
     local Window = {}
 
+    local Tabs={}
+
+    local Current
 
 
-    function Window:CreateTab(name)
+
+    function Window:CreateTab(name,image)
 
 
-        local Tab = {}
+        local Tab={}
 
 
-        -- page
+        local Button = Create("TextButton",{
 
-        local Page = Create("ScrollingFrame",{
+            Size=UDim2.new(1,-10,0,38),
 
-            Size=UDim2.fromScale(1,1),
+            BackgroundColor3=self.Theme.Element,
+
+            Text="",
+
+            Parent=Sidebar
+
+        })
+
+        Corner(Button,8)
+
+
+
+        local Icon = Create("ImageLabel",{
+
+            Size=UDim2.fromOffset(22,22),
+
+            Position=UDim2.fromOffset(8,8),
 
             BackgroundTransparency=1,
 
-            ScrollBarThickness=3,
+            Image="rbxassetid://"..(image or 0),
 
-            Visible=false,
-
-            Parent=Pages
+            Parent=Button
 
         })
 
 
-        local Layout = Instance.new("UIListLayout")
-        Layout.Padding=UDim.new(0,8)
-        Layout.Parent=Page
 
+        local Text = Create("TextLabel",{
 
+            Position=UDim2.fromOffset(38,0),
 
-        -- button
+            Size=UDim2.new(1,-40,1,0),
 
-        local Button = Create("TextButton",{
-
-            Size=UDim2.new(1,-10,0,35),
-
-            BackgroundColor3=self.Theme.Background,
+            BackgroundTransparency=1,
 
             Text=name,
 
@@ -209,33 +242,56 @@ function Library:CreateWindow(options)
 
             TextSize=14,
 
-            Parent=Sidebar
+            TextXAlignment=Enum.TextXAlignment.Left,
+
+            Parent=Button
 
         })
 
 
-        Corner(Button,8)
+
+
+        local Page = Create("ScrollingFrame",{
+
+            Size=UDim2.fromScale(1,1),
+
+            BackgroundTransparency=1,
+
+            Visible=false,
+
+            ScrollBarThickness=3,
+
+            Parent=Content
+
+        })
 
 
 
-        function Tab:Set(newName)
+        local Layout=Instance.new("UIListLayout")
+        Layout.Padding=UDim.new(0,8)
+        Layout.Parent=Page
 
-            Button.Text=newName
+
+
+
+
+        function Tab:SetTitle(new)
+
+            Text.Text=new
 
         end
 
 
 
+
         function Tab:Show()
 
-            if CurrentTab then
-
-                CurrentTab.Page.Visible=false
-
+            if Current then
+                Current.Page.Visible=false
             end
 
 
-            CurrentTab=self
+            Current=self
 
             Page.Visible=true
 
@@ -252,11 +308,45 @@ function Library:CreateWindow(options)
 
 
 
-        function Tab:Hide()
 
-            Page.Visible=false
+        function Tab:CreateSection(title)
+
+            local Section={}
+
+
+            local Label=Create("TextLabel",{
+
+                Size=UDim2.new(1,0,0,30),
+
+                BackgroundTransparency=1,
+
+                Text=title,
+
+                TextColor3=self.Theme.SubText,
+
+                Font=Enum.Font.GothamBold,
+
+                TextSize=14,
+
+                TextXAlignment=Enum.TextXAlignment.Left,
+
+                Parent=Page
+
+            })
+
+
+
+            function Section:Set(new)
+
+                Label.Text=new
+
+            end
+
+
+            return Section
 
         end
+
 
 
 
@@ -269,10 +359,9 @@ function Library:CreateWindow(options)
 
 
         Tab.Page=Page
-        Tab.Button=Button
-
 
         table.insert(Tabs,Tab)
+
 
 
         if #Tabs==1 then
