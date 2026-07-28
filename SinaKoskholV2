@@ -7,7 +7,6 @@ local LocalPlayer = Players.LocalPlayer
 
 local IgnorePlayers = {
     ["KANEKIMNS15"] = true,
-    ["SINASAMAR2"] = true,
 }
 
 local HighlightParts = {
@@ -146,61 +145,6 @@ local ToggleInf = TabMove:CreateToggle({
    InfiniteJump = Value
    end,
 })
-
-local SectionSpeed = TabMove:CreateSection({ name = "Speed"})
-local gridspeed = TabMove:CreateGroup()
-
-local leftspeed = gridspeed:CreateGroup({ direction = "row" })
-
-local Speed = 16
-local SpeedValue = false
-local function SetSpeed()
-    local Character = LocalPlayer.Character
-    if not Character then return end
-
-    local Humanoid = Character:FindFirstChildOfClass("Humanoid")
-    if SpeedValue and Humanoid then
-        if Humanoid.WalkSpeed ~= Speed then
-            Humanoid.WalkSpeed = Speed
-        end
-    end
-    if not SpeedValue and Humanoid then
-        Humanoid.WalkSpeed = 16
-    end
-end
-
-local ToggleSpeed = leftspeed:CreateToggle({
-   Name = "Speed",
-   Value = false, -- A flag is the identifier for the configuration file; make sure every element has a different flag if you're using configuration saving to ensure no overlaps
-   Callback = function(Value)
-   -- The function that takes place when the toggle is pressed
-   -- The variable (Value) is a boolean on whether the toggle is true or false
-   SpeedValue = Value
-   task.wait(0.2)
-   SetSpeed()
-   end,
-})
-
-local SliderSpeed = leftspeed:CreateSlider({
-    name = "Speed (Sonic Ali)⚡",
-    range = {16, 300},
-    increment = 1,
-    suffix = "⚡",
-    value = 16,
-    callback = function(Value)
-        Speed = Value
-        SetSpeed()
-    end,
-})
-
-RunService.Heartbeat:Connect(SetSpeed)
-
-LocalPlayer.CharacterAdded:Connect(function(Character)
-    Character:WaitForChild("Humanoid")
-    task.wait(0.2)
-    SetSpeed()
-end)
-
 
 local Noclip = false
 local GoingDown = false
