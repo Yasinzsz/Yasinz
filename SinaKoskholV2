@@ -4,14 +4,26 @@ local Players = game:GetService("Players")
 local UserInputService = game:GetService("UserInputService")
 local RunService = game:GetService("RunService")
 local LocalPlayer = Players.LocalPlayer
+local player = Players.LocalPlayer
 
+
+local RigType = "R15"
 local IgnorePlayers = {
     ["KANEKIMNS15"] = true,
+    ["SINASAMAR2"] = true,
 }
 
-local HighlightParts = {
+local HighlightPartsR6 = {
     Head = true,
-    HumanoidRootPart = false,
+    Torso = true,
+    LeftArm = true,
+    RightArm = true,
+    LeftLeg = true,
+    RightLeg = true,
+}
+
+local HighlightPartsR15 = {
+    Head = true,
     UpperTorso = true,
     LowerTorso = true,
 
@@ -32,6 +44,7 @@ local HighlightParts = {
     RightFoot = true,
 }
 
+local HighlightParts = RigType == "R6" and HighlightPartsR6 or HighlightPartsR15
 
 _G.Transparency = 0.7
 _G.HeadSize = 3
@@ -78,6 +91,18 @@ local TraceToggle = TabCam:CreateToggle({
 })
 
 local sectionESP = TabCheats:CreateSection({name = "ESP"})
+
+
+local RigDropdown = TabCheats:CreateDropdown({
+    Name = "ESP Rig Type",
+    Options = {"R6", "R15"},
+    CurrentOption = {"R15"},
+    MultipleOptions = false,
+    Callback = function(option)
+        RigType = option[1]
+    end,
+})
+
 local ESPToggle = TabCheats:CreateToggle({
     name = "ESP",
     value = false,
@@ -86,6 +111,85 @@ local ESPToggle = TabCheats:CreateToggle({
     end,
 })
 
+local SelectedPlayer = nil
+
+
+local function GetPlayers()
+    local list = {}
+
+    for _, plr in ipairs(Players:GetPlayers()) do
+        if plr ~= player then
+            table.insert(list, plr.Name)
+        end
+    end
+
+    return list
+end
+
+
+local Dropdown = TabMove:CreateDropdown({
+    name = "Select Player",
+    multiSelect = false,
+    options = GetPlayers(),
+    value = {},
+
+    callback = function(selected)
+        SelectedPlayer = selected
+        print("Selected:", SelectedPlayer)
+    end,
+})
+
+
+local function RefreshPlayers()
+    Dropdown:Refresh(GetPlayers())
+end
+
+
+Players.PlayerAdded:Connect(function()
+    task.wait(0.2)
+    RefreshPlayers()
+end)
+
+Players.PlayerRemoving:Connect(function()
+    task.wait(0.2)
+    RefreshPlayers()
+end)
+
+
+TabMove:CreateButton({
+    name = "Teleport",
+
+    callback = function()
+
+        if not SelectedPlayer then
+            window:Notify({
+                title = "Error",
+                content = "Select a player first!",
+                duration = 3
+            })
+            return
+        end
+
+
+        local target = Players:FindFirstChild(SelectedPlayer)
+
+        if target and target.Character 
+        and target.Character:FindFirstChild("HumanoidRootPart") then
+
+            local char = player.Character or player.CharacterAdded:Wait()
+
+            char:MoveTo(
+                target.Character.HumanoidRootPart.Position
+            )
+
+            window:Notify({
+                title = "Success",
+                content = "Teleported to "..SelectedPlayer,
+                duration = 3
+            })
+        end
+    end,
+})
 
 local sectionHit = TabCheats:CreateSection({ name = "HitBox"})
 local gridCheat = TabCheats:CreateGroup()
