@@ -301,6 +301,7 @@ local ButtonSilent = TabPreset:CreateButton({
    HitToggle:Set(true)
    SliderHitBox:Set(6)
    ESPToggle:Set(true)
+   TraceToggle:Set(true)
    end,
 })
 
