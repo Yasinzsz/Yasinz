@@ -45,8 +45,8 @@ local HighlightPartsR15 = {
 
 local HighlightParts = RigType == "R6" and HighlightPartsR6 or HighlightPartsR15
 
-_G.Transparency = 0.7
-_G.HeadSize = 3
+_G.Transparency = 0.9
+_G.HeadSize = 6
 _G.Disabled = false
 _G.ESPEnabled = false
 _G.TracersEnabled = false
@@ -217,7 +217,7 @@ local SliderHitBox = leftPlayer:CreateSlider({
     name = "Size",
     range = { 0, 6 },
     increment = 1,
-    value = 3,
+    value = 6,
     suffix = "Stud",
     callback = function(value)
     _G.HeadSize = value
@@ -240,7 +240,7 @@ local SliderTransparency = rightPlayer:CreateSlider({
     name = "Transparency",
     range = { 0, 1 },
     increment = 0.1,
-    value = 0.7,
+    value = 0.9,
     suffix = ".",
     callback = function(value)
     _G.Transparency = value
@@ -299,31 +299,8 @@ local ButtonSilent = TabPreset:CreateButton({
    callback = function()
    -- The function that takes place when the button is pressed
    HitToggle:Set(true)
-   SliderHitBox:Set(3)
+   SliderHitBox:Set(6)
    ESPToggle:Set(true)
-   end,
-})
-
-local ButtonFFA = TabPreset:CreateButton({
-   name = "FFA (Koskesh Bazi)",
-   callback = function()
-   -- The function that takes place when the button is pressed
-   HitToggle:Set(true)
-   SliderHitBox:Set(10)
-   ESPToggle:Set(true)
-   end,
-})
-
-local ButtonGOD = TabPreset:CreateButton({
-   name = "GOD (Koskesh ++)",
-   callback = function()
-   -- The function that takes place when the button is pressed
-   HitToggle:Set(true)
-   SliderHitBox:Set(25)
-   ESPToggle:Set(true)
-   SliderSpeed:Set(300)
-   ToggleInf:Set(true)
-   ToggleNoclip:Set(true)
    end,
 })
 
