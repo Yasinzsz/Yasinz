@@ -1,0 +1,482 @@
+local Rayfield = loadstring(game:HttpGet("https://sirius.menu/gen2"))()
+
+local Players = game:GetService("Players")
+local UserInputService = game:GetService("UserInputService")
+local RunService = game:GetService("RunService")
+local LocalPlayer = Players.LocalPlayer
+local player = Players.LocalPlayer
+
+
+local RigType = "R15"
+local IgnorePlayers = {
+    ["KANEKIMNS15"] = true,
+}
+
+local HighlightPartsR6 = {
+    Head = true,
+    Torso = true,
+    LeftArm = true,
+    RightArm = true,
+    LeftLeg = true,
+    RightLeg = true,
+}
+
+local HighlightPartsR15 = {
+    Head = true,
+    UpperTorso = true,
+    LowerTorso = true,
+
+    LeftUpperArm = true,
+    LeftLowerArm = true,
+    LeftHand = true,
+
+    RightUpperArm = true,
+    RightLowerArm = true,
+    RightHand = true,
+
+    LeftUpperLeg = true,
+    LeftLowerLeg = true,
+    LeftFoot = true,
+
+    RightUpperLeg = true,
+    RightLowerLeg = true,
+    RightFoot = true,
+}
+
+local HighlightParts = RigType == "R6" and HighlightPartsR6 or HighlightPartsR15
+
+_G.Transparency = 0.7
+_G.HeadSize = 3
+_G.Disabled = false
+_G.ESPEnabled = false
+_G.TracersEnabled = false
+_G.HitboxColor = BrickColor.new("Black")
+_G.FOVEnabled = true
+local FOV = 90
+workspace.CurrentCamera.FieldOfView = FOV
+
+
+
+local window = Rayfield:CreateWindow({
+    name = "MvS | DUELS | VERSION JADID",
+    subtitle = "Tavasote Koskeshi Benam Yasin",
+    icon = 10039620141,
+    showName = "MvS | DUELS",
+})
+
+local TabPreset = window:CreateTab({ name = "Presets", icon = 93364949241311 })
+local TabCheats = window:CreateTab({ name = "Cheats", icon = 7992557371 })
+local TabCam = window:CreateTab({ name = "Camera", icon = 13085201776 })
+local TabMove = window:CreateTab({ name = "Movement", icon = 9657060548 })
+
+local Visible = true
+
+UserInputService.InputBegan:Connect(function(input, gameProcessed)
+    if gameProcessed then return end
+
+    if input.KeyCode == Enum.KeyCode.L then
+        Visible = not Visible
+        window:SetVisibility(Visible)
+    end
+end)
+
+local SliderFOV = TabCam:CreateSlider({
+    name = "FOV",
+    range = { 70, 120 },
+    increment = 1,
+    value = 90,
+    suffix = "°",
+    callback = function(value)
+        workspace.CurrentCamera.FieldOfView = value
+    end,
+})
+local TraceToggle = TabCam:CreateToggle({
+   Name = "Trace(Kheyli Adam zerangi Hasti)",
+   CurrentValue = false, -- A flag is the identifier for the configuration file; make sure every element has a different flag if you're using configuration saving to ensure no overlaps
+   Callback = function(Value)
+   -- The function that takes place when the toggle is pressed
+   -- The variable (Value) is a boolean on whether the toggle is true or false
+   _G.TracersEnabled = not _G.TracersEnabled
+   end,
+})
+
+local sectionESP = TabCheats:CreateSection({name = "ESP"})
+
+
+local RigDropdown = TabCheats:CreateDropdown({
+    Name = "ESP Rig Type",
+    Options = {"R6", "R15"},
+    CurrentOption = {"R15"},
+    MultipleOptions = false,
+    Callback = function(option)
+        RigType = option[1]
+    end,
+})
+
+local ESPToggle = TabCheats:CreateToggle({
+    name = "ESP",
+    value = false,
+    callback = function(value)
+    _G.ESPEnabled = not _G.ESPEnabled
+    end,
+})
+
+local SelectedPlayer = nil
+
+
+local function GetPlayers()
+    local list = {}
+
+    for _, plr in ipairs(Players:GetPlayers()) do
+        if plr ~= player then
+            table.insert(list, plr.Name)
+        end
+    end
+
+    return list
+end
+
+
+local Dropdown = TabMove:CreateDropdown({
+    name = "Select Player",
+    multiSelect = false,
+    options = GetPlayers(),
+    value = {},
+
+    callback = function(selected)
+        SelectedPlayer = selected
+        print("Selected:", SelectedPlayer)
+    end,
+})
+
+
+local function RefreshPlayers()
+    Dropdown:Refresh(GetPlayers())
+end
+
+
+Players.PlayerAdded:Connect(function()
+    task.wait(0.2)
+    RefreshPlayers()
+end)
+
+Players.PlayerRemoving:Connect(function()
+    task.wait(0.2)
+    RefreshPlayers()
+end)
+
+
+TabMove:CreateButton({
+    name = "Teleport",
+
+    callback = function()
+
+        if not SelectedPlayer then
+            window:Notify({
+                title = "Error",
+                content = "Select a player first!",
+                duration = 3
+            })
+            return
+        end
+
+
+        local target = Players:FindFirstChild(SelectedPlayer)
+
+        if target and target.Character 
+        and target.Character:FindFirstChild("HumanoidRootPart") then
+
+            local char = player.Character or player.CharacterAdded:Wait()
+
+            char:MoveTo(
+                target.Character.HumanoidRootPart.Position
+            )
+
+            window:Notify({
+                title = "Success",
+                content = "Teleported to "..SelectedPlayer,
+                duration = 3
+            })
+        end
+    end,
+})
+
+local sectionHit = TabCheats:CreateSection({ name = "HitBox"})
+local gridCheat = TabCheats:CreateGroup()
+
+local leftPlayer = gridCheat:CreateGroup({ direction = "column" })
+
+local HitToggle = leftPlayer:CreateToggle({
+    name = "HitBox",
+    value = false,
+    callback = function(value)
+    _G.Disabled = not _G.Disabled
+    end,
+})
+local SliderHitBox = leftPlayer:CreateSlider({
+    name = "Size",
+    range = { 0, 6 },
+    increment = 1,
+    value = 3,
+    suffix = "Stud",
+    callback = function(value)
+    _G.HeadSize = value
+    end,
+})
+
+local colors = {BrickColor.new("Really red"), BrickColor.new("Lime green"), BrickColor.new("Really blue"), BrickColor.new("Black"), BrickColor.new("New Yeller")}
+local colorIdx = 1
+
+local rightPlayer = gridCheat:CreateGroup({ direction = "column" })
+
+local HitColorBtn = rightPlayer:CreateButton({
+    name = "Color HitBox",
+    callback = function()
+        colorIdx = (colorIdx % #colors) + 1
+        _G.HitboxColor = colors[colorIdx]
+    end,
+})
+local SliderTransparency = rightPlayer:CreateSlider({
+    name = "Transparency",
+    range = { 0, 1 },
+    increment = 0.1,
+    value = 0.7,
+    suffix = ".",
+    callback = function(value)
+    _G.Transparency = value
+    end,
+})
+
+--movement
+local InfiniteJump = false
+local SectionSpeed = TabMove:CreateSection({ name = "InfJump"})
+local ToggleInf = TabMove:CreateToggle({
+   Name = "InfiniteJump(Super An💩🪽)",
+   Value = false, -- A flag is the identifier for the configuration file; make sure every element has a different flag if you're using configuration saving to ensure no overlaps
+   Callback = function(Value)
+   -- The function that takes place when the toggle is pressed
+   -- The variable (Value) is a boolean on whether the toggle is true or false
+   InfiniteJump = Value
+   end,
+})
+
+local Noclip = false
+local GoingDown = false
+local GoingUp = false
+
+local SectionNoClip = TabMove:CreateSection("NoClip")
+local ToggleNoclip = TabMove:CreateToggle({
+   name = "Noclip (X-MEN 🙏😭)",
+   value = false,
+   callback = function(Value)
+    Noclip = Value
+
+    if not Value then
+        local Character = LocalPlayer.Character
+        if Character then
+            for _, Part in ipairs(Character:GetDescendants()) do
+                if Part:IsA("BasePart") then
+                    Part.CanCollide = true
+                end
+            end
+        end
+    end
+end,
+})
+local ButtonPanic = TabPreset:CreateButton({
+   name = "Panic (Khaye Krdan)",
+   callback = function()
+   -- The function that takes place when the button is pressed
+   HitToggle:Set(false)
+   ESPToggle:Set(false)
+   SliderSpeed:Set(16)
+   ToggleInf:Set(false)
+   end,
+})
+
+local ButtonSilent = TabPreset:CreateButton({
+   Name = "Silent (Yavashaki)",
+   callback = function()
+   -- The function that takes place when the button is pressed
+   HitToggle:Set(true)
+   SliderHitBox:Set(3)
+   ESPToggle:Set(true)
+   end,
+})
+
+local ButtonFFA = TabPreset:CreateButton({
+   name = "FFA (Koskesh Bazi)",
+   callback = function()
+   -- The function that takes place when the button is pressed
+   HitToggle:Set(true)
+   SliderHitBox:Set(10)
+   ESPToggle:Set(true)
+   end,
+})
+
+local ButtonGOD = TabPreset:CreateButton({
+   name = "GOD (Koskesh ++)",
+   callback = function()
+   -- The function that takes place when the button is pressed
+   HitToggle:Set(true)
+   SliderHitBox:Set(25)
+   ESPToggle:Set(true)
+   SliderSpeed:Set(300)
+   ToggleInf:Set(true)
+   ToggleNoclip:Set(true)
+   end,
+})
+
+
+--noclip
+UserInputService.InputBegan:Connect(function(Input, GP)
+    if GP then return end
+
+    if Input.KeyCode == Enum.KeyCode.LeftControl then
+        GoingDown = true
+    end
+end)
+
+UserInputService.InputEnded:Connect(function(Input)
+    if Input.KeyCode == Enum.KeyCode.LeftControl then
+        GoingDown = false
+    end
+end)
+
+UserInputService.InputBegan:Connect(function(input, gameProcessed)
+    if gameProcessed then return end
+
+    if input.KeyCode == Enum.KeyCode.E then
+        GoingUp = true
+    end
+end)
+
+UserInputService.InputEnded:Connect(function(input)
+    if input.KeyCode == Enum.KeyCode.E then
+        GoingUp = false
+    end
+end)
+
+RunService.RenderStepped:Connect(function(dt)
+    if not Noclip then return end
+
+    local Character = LocalPlayer.Character
+    if not Character then return end
+
+    local Root = Character:FindFirstChild("HumanoidRootPart")
+    if not Root then return end
+
+    for _, Part in ipairs(Character:GetDescendants()) do
+        if Part:IsA("BasePart") then
+            Part.CanCollide = false
+        end
+    end
+
+    if GoingDown and Noclip then
+        Root.CFrame = Root.CFrame * CFrame.new(0, -100 * dt, 0)
+    end
+    if GoingUp and Noclip then
+        Root.CFrame = Root.CFrame * CFrame.new(0, 100 * dt, 0)
+    end
+end)
+
+--inf jump
+
+UserInputService.JumpRequest:Connect(function()
+   if InfiniteJump then
+      local Character = LocalPlayer.Character
+      local Humanoid = Character and Character:FindFirstChildOfClass("Humanoid")
+
+      if Humanoid then
+         Humanoid:ChangeState(Enum.HumanoidStateType.Jumping)
+      end
+   end
+end)
+
+--player>
+
+local tracers = {}
+game:GetService('RunService').RenderStepped:Connect(function()
+
+    if _G.Disabled then
+    for _, v in ipairs(Players:GetPlayers()) do
+        if v ~= LocalPlayer
+        and not IgnorePlayers[v.Name]
+        and v.Character then
+                pcall(function()
+                    v.Character.Head.Size = Vector3.new(_G.HeadSize, _G.HeadSize, _G.HeadSize)
+                    v.Character.Head.Transparency = _G.Transparency
+                    v.Character.HumanoidRootPart.CanCollide = false
+                end)
+            end
+        end
+    else
+        for i,v in next, Players:GetPlayers() do
+            if v ~= LocalPlayer and v.Character and v.Character:FindFirstChild("HumanoidRootPart") then
+                pcall(function()
+                    v.Character.HumanoidRootPart.Size = Vector3.new(2, 2, 1)
+                    v.Character.HumanoidRootPart.Transparency = 1
+                end)
+            end
+        end
+    end
+    
+
+        for _, Player in ipairs(Players:GetPlayers()) do
+            if Player ~= LocalPlayer 
+            and not IgnorePlayers[Player.Name] 
+            and Player.Character then
+                local Character = Player.Character
+                local Humanoid = Character:FindFirstChild("Humanoid")
+
+                for PartName, Enabled in pairs(HighlightParts) do
+                    local Part = Character:FindFirstChild(PartName)
+
+                    if Part and Enabled then
+                        local HL = Part:FindFirstChild("ESPHighlight")
+
+                        if not HL then
+                            HL = Instance.new("Highlight")
+                            HL.Name = "ESPHighlight"
+                            HL.Adornee = Part
+                            HL.FillColor = Color3.fromRGB(0, 0, 0)
+                            HL.OutlineColor = Color3.fromRGB(255, 255, 255)
+                            HL.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop
+                            HL.Parent = Part
+                        end
+
+                        HL.Enabled = _G.ESPEnabled and Humanoid and Humanoid.Health > 0
+                    end
+                end
+            end
+        end
+    
+
+    for _, v in pairs(Players:GetPlayers()) do
+        if v ~= LocalPlayer and v.Character and v.Character:FindFirstChild("HumanoidRootPart") then
+            local humanoid = v.Character:FindFirstChild("Humanoid")
+            
+            if _G.TracersEnabled and humanoid and humanoid.Health > 0 then
+                if not tracers[v.Name] then
+                    tracers[v.Name] = Drawing.new("Line")
+                    tracers[v.Name].Color = Color3.fromRGB(255, 255, 255)
+                    tracers[v.Name].Thickness = 1
+                end
+                local pos, vis = workspace.CurrentCamera:WorldToViewportPoint(v.Character.HumanoidRootPart.Position)
+                if vis then
+                    tracers[v.Name].Visible = true
+                    tracers[v.Name].From = Vector2.new(workspace.CurrentCamera.ViewportSize.X/2, workspace.CurrentCamera.ViewportSize.Y)
+                    tracers[v.Name].To = Vector2.new(pos.X, pos.Y)
+                else
+                    tracers[v.Name].Visible = false
+                end
+            elseif tracers[v.Name] then
+                tracers[v.Name]:Remove()
+                tracers[v.Name] = nil
+            end
+        elseif tracers[v.Name] then
+            tracers[v.Name]:Remove()
+            tracers[v.Name] = nil
+        end
+    end
+end)
